@@ -60,6 +60,14 @@ class Bot {
 
 			// Start the client
 			$client->start();
+
+			// Join chat room if MUC was configured
+			// @todo: add password support (not currently available in JAXL, needs custom code)
+			if(!empty($config["muc"])) {
+				$muc_jid = $config["muc"]["room"] . '@' . $config["muc"]["server"] . '/' . $config["muc"]["nick"];
+				$muc_options = array('no_history' => true);
+				$client->xeps['0045']->join_room($muc_jid, $muc_options);
+			}
 		}
 		return $client;
 	}
