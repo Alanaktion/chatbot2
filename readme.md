@@ -1,12 +1,17 @@
 # chatbot2
 
+## Requirements
+PHP 5.4 or higher.
+
 ## Installation
-Run a git clone, then `compser install`.
+Clone the repo or download the zip.
 
 ## Configuration
 Copy `config-sample.php` to `config.php` and replace the configuration options with the ones for your server.
 
 ## Usage
+Start the bot by running `php bot.php` (or `./bot.php` on unix-like environments) from the command line.
+
 Use the bot by running commands from a chat room the bot is a member of, or by messaging the bot directly. All commands start with a hash (`#`), but the hash can be omitted if messaging the bot directly.
 
 Run `#help` to list all available commands.

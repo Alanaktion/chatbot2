@@ -22,6 +22,9 @@ class Bot {
 			$config = self::config();
 			$client = new JAXL($config);
 
+			// Enable MUC support
+			$client->require_xep('0045');
+
 			// Handle XMPP events
 			$client->add_cb("on_stream_start", function() {
 				_debug("Client connected to server.");
