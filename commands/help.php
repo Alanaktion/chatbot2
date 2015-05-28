@@ -18,7 +18,7 @@ return function(JAXL $client, XMPPStanza $msg, array $params) {
 	} else {
 
 		// Show single command help
-		$file = __DIR__ . "/{$params[0]}.txt";
+		$file = dirname(__DIR__) . "/command-help/{$params[0]}.txt";
 		if(is_file($file)) {
 			return file_get_contents($file);
 		} else {
