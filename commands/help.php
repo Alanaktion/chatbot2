@@ -13,16 +13,16 @@ return function(JAXL $client, XMPPStanza $msg, array $params) {
 		}
 
 		$count = count($commands);
-		Bot::reply($msg, "Available commands ($count): " . implode(", ", $commands));
+		return "Available commands ($count): " . implode(", ", $commands);
 
 	} else {
 
 		// Show single command help
 		$file = __DIR__ . "/{$params[0]}.txt";
 		if(is_file($file)) {
-			Bot::reply($msg, file_get_contents($file));
+			return file_get_contents($file);
 		} else {
-			Bot::reply($msg, "Help is not available for {$params[0]}. Try running the command without any parameters.");
+			return "Help is not available for {$params[0]}. Try running the command without any parameters.";
 		}
 
 	}
