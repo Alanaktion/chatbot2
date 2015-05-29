@@ -16,5 +16,12 @@ $config = array(
 	),
 
 	// API Keys, etc.
+	"twitter" => array(
+		"ConsumerKey" => "",
+		"ConsumerSecret" => "",
+		"OAuthToken" => "",
+		"OAuthSecret" => "",
+	),
+	"youtube_key" => "",
 
 );

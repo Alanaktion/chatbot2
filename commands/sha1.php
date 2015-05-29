@@ -1,8 +1,8 @@
 <?php
 return function(JAXL $client, XMPPStanza $msg, array $params) {
 	if(empty($params)) {
-		return "Usage: #say <message>";
+		return "Usage: #sha1 <string>";
 	} else {
-		return implode(" ", $params);
+		return sha1(implode(" ",$params));
 	}
 };

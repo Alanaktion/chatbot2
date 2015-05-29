@@ -17,7 +17,7 @@ class Bot {
 	 * @return JAXL
 	 */
 	public static function instance() {
-		global $client;
+		global $client, $config;
 		if(!isset($client)) {
 
 			// Create a new client
@@ -96,6 +96,30 @@ class Bot {
 	 */
 	public static function reply($original_msg, $body) {
 		global $client, $muc_jid;
+
+		if($original_msg->type == 'groupchat') {
+			$client->xeps['0045']->send_groupchat(substr($muc_jid, 0, strpos($muc_jid, '/')), $body);
+		} else {
+			$original_msg->to = $original_msg->from;
+			$original_msg->from = $client->full_jid->to_string();
+			$original_msg->body = $body;
+			$client->send($original_msg);
+		}
+	}
+
+	/**
+	 * Send a reply message with HTML
+	 * @param  object $original_msg
+	 * @param  string $html
+	 * @param  string $plaintext
+	 * @return void
+	 */
+	public static function replyHtml($original_msg, $html, $plaintext = null) {
+		global $client, $muc_jid;
+
+		if($plaintext === null) {
+			$plaintext = strip_tags($html);
+		}
 
 		if($original_msg->type == 'groupchat') {
 			$client->xeps['0045']->send_groupchat(substr($muc_jid, 0, strpos($muc_jid, '/')), $body);
