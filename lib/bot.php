@@ -140,8 +140,6 @@ class Bot {
 	public static function runCommand($command_str, $msg) {
 		global $client, $last_command;
 
-		print_r($msg);
-
 		$params = explode(" ", $command_str);
 		$command = array_shift($params);
 		$file = dirname(__DIR__) . "/commands/$command.php";
