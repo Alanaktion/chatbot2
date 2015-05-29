@@ -19,6 +19,7 @@ class Bot {
 	public static function instance() {
 		global $client;
 		if(!isset($client)) {
+
 			// Create a new client
 			$config = self::config();
 			$client = new JAXL($config);
@@ -38,7 +39,7 @@ class Bot {
 				$client->get_roster();
 
 				// Join chat room if MUC was configured
-				if(!empty($config["muc"])) {
+				if(!empty($config["muc"]["enabled"])) {
 					$muc_jid = $config["muc"]["room"] . '@' . $config["muc"]["server"] . '/' . $config["muc"]["nick"];
 					$muc_options = array('no_history' => true);
 					if(!empty($config["muc"]["password"])) {
@@ -142,6 +143,60 @@ class Bot {
 			_info("Command $command does not exist.");
 		}
 
+	}
+
+}
+
+class BotHttp {
+
+	/**
+	 * Perform a HTTP GET request on a URL
+	 * @param  string $url
+	 * @param  string $user_agent
+	 * @return string
+	 */
+	public static function GET($url, $user_agent = null) {
+		if (in_array('curl', get_loaded_extensions())) {
+			$curl = curl_init($url);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+			curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+			if($user_agent) {
+				curl_setopt($curl, CURLOPT_HTTPHEADER, array('User-Agent: ' . $user_agent));
+			}
+			$data = curl_exec($curl);
+			curl_close($curl);
+		} else {
+			$data = file_get_contents($url);
+		}
+		return $data;
+	}
+
+	/**
+	 * Perform a HTTP POST request on a URL
+	 * @param  string $url
+	 * @param  array  $post_data
+	 * @param  string $content_type
+	 * @return string
+	 */
+	public static function POST($url, $post_data = array(), $content_type = "application/json") {
+		if (in_array('curl', get_loaded_extensions())) {
+			$curl = curl_init($url);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+			curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+			curl_setopt($curl, CURLOPT_POSTFIELDS, $post_data);
+			if($content_type) {
+				curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: ' . $content_type));
+			}
+			$data = curl_exec($curl);
+			curl_close($curl);
+		} else {
+			$data = file_get_contents($url);
+		}
+		return $data;
 	}
 
 }

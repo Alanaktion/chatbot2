@@ -9,7 +9,6 @@ if (!defined('STDIN')) {
 	die("chatbot2 must be run from the command line.");
 }
 
-require __DIR__ . '/lib/jaxl/jaxl.php';
-require __DIR__ . '/lib/bot.php';
+require __DIR__ . '/lib/init.php';
 
 $bot = Bot::instance();
