@@ -2,32 +2,32 @@
     /*
      ChatterBotAPI
      Copyright (C) 2011 pierredavidbelanger@gmail.com
-     
+
      This program is free software: you can redistribute it and/or modify
      it under the terms of the GNU Lesser General Public License as published by
      the Free Software Foundation, either version 3 of the License, or
      (at your option) any later version.
-     
+
      This program is distributed in the hope that it will be useful,
      but WITHOUT ANY WARRANTY; without even the implied warranty of
      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
      GNU Lesser General Public License for more details.
-     
+
      You should have received a copy of the GNU Lesser General Public License
      along with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
-    
+
     #################################################
     # API
     #################################################
-    
+
     class ChatterBotType
     {
         const CLEVERBOT = 1;
         const JABBERWACKY = 2;
         const PANDORABOTS = 3;
     }
-    
+
     class ChatterBotFactory
     {
         public function create($type, $arg = null)
@@ -52,7 +52,7 @@
             }
         }
     }
-    
+
     abstract class ChatterBot
     {
         public function createSession()
@@ -60,14 +60,14 @@
             return null;
         }
     }
-    
+
     abstract class ChatterBotSession
     {
         public function thinkThought($thought)
         {
             return $thought;
         }
-        
+
         public function think($text)
         {
             $thought = new ChatterBotThought();
@@ -75,16 +75,16 @@
             return $this->thinkThought($thought)->getText();
         }
     }
-    
+
     class ChatterBotThought
     {
         private $text;
-        
+
         public function getText()
         {
             return $this->text;
         }
-        
+
         public function setText($text)
         {
             $this->text = $text;
@@ -94,32 +94,32 @@
     #################################################
     # Cleverbot impl
     #################################################
-    
+
     class _Cleverbot extends ChatterBot
     {
         private $url;
-        
+
         public function __construct($url)
         {
             $this->url = $url;
         }
-        
+
         public function getUrl()
         {
             return $this->url;
         }
-        
+
         public function setUrl($url)
         {
             $this->url = $url;
-        }        
+        }
 
         public function createSession()
         {
             return new _CleverbotSession($this);
         }
     }
-    
+
     class _CleverbotSession extends ChatterBotSession
     {
         private $bot;
@@ -175,47 +175,47 @@
             return $responseThought;
         }
     }
-    
+
     #################################################
     # Pandorabots impl
     #################################################
-    
+
     class _Pandorabots extends ChatterBot
     {
         private $botid;
-        
+
         public function __construct($botid)
         {
             $this->botid = $botid;
         }
-        
+
         public function getBotid()
         {
             return $this->botid;
         }
-        
+
         public function setBotid($botid)
         {
             $this->botid = $botid;
-        }        
-        
+        }
+
         public function createSession()
         {
             return new _PandorabotsSession($this);
         }
     }
-    
+
     class _PandorabotsSession extends ChatterBotSession
     {
         private $vars;
-        
+
         public function __construct($bot)
         {
             $this->vars = array();
             $this->vars['botid'] = $bot->getBotid();
             $this->vars['custid'] = uniqid();
         }
-        
+
         public function thinkThought($thought)
         {
             $this->vars['input'] = $thought->getText();
@@ -227,7 +227,7 @@
             return $responseThought;
         }
     }
-    
+
     #################################################
     # Utils
     #################################################
@@ -237,6 +237,7 @@
         $contextParams = array();
         $contextParams['http'] = array();
         $contextParams['http']['method'] = 'POST';
+        $contextParams['http']['header'] = "Content-Type: application/x-www-form-urlencoded\r\n";
         $contextParams['http']['content'] = http_build_query($params);
         $context = stream_context_create($contextParams);
         $fp = fopen($url, 'rb', false, $context);
@@ -244,7 +245,7 @@
         fclose($fp);
         return $response;
     }
-    
+
     function _utils_string_at_index($strings, $index)
     {
         if (count($strings) > $index)

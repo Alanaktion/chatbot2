@@ -1,9 +1,9 @@
 <?php
 
 // Pre-load all libraries
-require_once "jaxl/jaxl.php";
-require_once "bot.php";
-require_once "chatterbotapi.php";
-require_once "twitteroauth.php";
-require_once "phpQuery-onefile.php";
-require_once "Unirest.php";
+require_once __DIR__ . "/jaxl/jaxl.php";
+require_once __DIR__ . "/bot.php";
+require_once __DIR__ . "/chatterbotapi.php";
+require_once __DIR__ . "/twitteroauth.php";
+require_once __DIR__ . "/phpQuery-onefile.php";
+require_once __DIR__ . "/Unirest.php";
