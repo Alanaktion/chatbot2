@@ -23,5 +23,6 @@ $config = array(
 		"OAuthSecret" => "",
 	),
 	"youtube_key" => "",
+	"mashape_key" => "",
 
 );

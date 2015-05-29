@@ -1,0 +1,2 @@
+Usage: #j <message>
+Sends a message to the Jabberwacky bot and returns the response.
