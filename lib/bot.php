@@ -7,6 +7,7 @@
 class Bot {
 
 	public static $defaultConfig = array(
+			"protocol" => "tcp",
 			"port" => 5222,
 			"log_level" => JAXL_INFO
 		);
@@ -29,28 +30,40 @@ class Bot {
 			$client->add_cb("on_stream_start", function() {
 				_debug("Client connected to server.");
 			});
-			$client->add_cb("on_auth_success", function() {
-				global $client;
+			$client->add_cb("on_auth_success", function() use($config) {
+				global $client, $muc_jid;
 				_info("Client authenticated successfully.");
 				$client->set_status("Available");
 				$client->get_vcard();
 				$client->get_roster();
+
+				// Join chat room if MUC was configured
+				if(!empty($config["muc"])) {
+					$muc_jid = $config["muc"]["room"] . '@' . $config["muc"]["server"] . '/' . $config["muc"]["nick"];
+					$muc_options = array('no_history' => true);
+					if(!empty($config["muc"]["password"])) {
+						$muc_options["password"] = $config["muc"]["password"];
+					}
+					_info("Joining room {$muc_jid}...");
+					$client->xeps['0045']->join_room($muc_jid, $muc_options);
+				}
+
 			});
 			$client->add_cb("on_chat_message", function($msg) {
-				global $client, $last_command;
-				if($msg == '##') {
+				global $last_command;
+				if($msg->body == '##') {
 					Bot::runCommand($last_command, $msg);
 					return;
-				} else {
+				} elseif($msg->body) {
 					Bot::runCommand(ltrim($msg->body, '#'), $msg);
 				}
 			});
 			$client->add_cb("on_groupchat_message", function($msg) {
-				global $client, $last_command;
-				if($msg == '##') {
+				global $last_command;
+				if($msg->body == '##') {
 					Bot::runCommand($last_command, $msg);
 					return;
-				} elseif(substr($msg, 0, 1) == "#") {
+				} elseif(substr($msg->body, 0, 1) == "#") {
 					Bot::runCommand(ltrim($msg->body, '#'), $msg);
 				}
 			});
@@ -61,13 +74,6 @@ class Bot {
 			// Start the client
 			$client->start();
 
-			// Join chat room if MUC was configured
-			// @todo: add password support (not currently available in JAXL, needs custom code)
-			if(!empty($config["muc"])) {
-				$muc_jid = $config["muc"]["room"] . '@' . $config["muc"]["server"] . '/' . $config["muc"]["nick"];
-				$muc_options = array('no_history' => true);
-				$client->xeps['0045']->join_room($muc_jid, $muc_options);
-			}
 		}
 		return $client;
 	}
@@ -88,11 +94,16 @@ class Bot {
 	 * @return void
 	 */
 	public static function reply($original_msg, $body) {
-		global $client;
-		$original_msg->to = $original_msg->from;
-		$original_msg->from = $client->full_jid->to_string();
-		$original_msg->body = $body;
-		$client->send($original_msg);
+		global $client, $muc_jid;
+
+		if($original_msg->type == 'groupchat') {
+			$client->xeps['0045']->send_groupchat(substr($muc_jid, 0, strpos($muc_jid, '/')), $body);
+		} else {
+			$original_msg->to = $original_msg->from;
+			$original_msg->from = $client->full_jid->to_string();
+			$original_msg->body = $body;
+			$client->send($original_msg);
+		}
 	}
 
 	/**
@@ -103,6 +114,8 @@ class Bot {
 	 */
 	public static function runCommand($command_str, $msg) {
 		global $client, $last_command;
+
+		print_r($msg);
 
 		$params = explode(" ", $command_str);
 		$command = array_shift($params);
