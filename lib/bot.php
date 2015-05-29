@@ -147,6 +147,10 @@ class Bot {
 
 }
 
+/**
+ * Bot
+ * HTTP request static methods using curl
+ */
 class BotHttp {
 
 	/**
