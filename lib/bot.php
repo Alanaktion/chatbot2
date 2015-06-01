@@ -162,7 +162,7 @@ class Bot {
 			}
 
 		} else {
-			_info("Command $command does not exist.");
+			_notice("Command $command does not exist.");
 		}
 
 	}

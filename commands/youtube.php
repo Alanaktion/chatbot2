@@ -6,7 +6,7 @@ return function(JAXL $client, XMPPStanza $msg, array $params) {
 		$param_str = implode(" ",$params);
 		$url = "https://www.googleapis.com/youtube/v3/search?part=id%2Csnippet&type=video&q=" . urlencode($param_str) . "&key=" . urlencode($config["youtube_key"]);
 
-		$result = json_decode(file_get_contents($url));
+		$result = json_decode(BotHttp::GET($url));
 
 		if (isset($result->items[0])) {
 			$video = $result->items[0];
