@@ -1,0 +1,2 @@
+Usage: #math <expression>
+Evaluate a mathematical expression, solve an equation, or convert units and currencies
