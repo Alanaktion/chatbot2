@@ -5,9 +5,11 @@ return function(JAXL $client, XMPPStanza $msg, array $params) {
 		return "Usage: #nick <nickname>";
 	}
 
-	$client->xeps['0045']->join_room(
-		$config["muc"]["room"] . '@' . $config["muc"]["server"] . '/' . $params[0],
-		array('no_history' => true) + $config["muc"]["password"] ? array('password' => $config["muc"]["password"]) : array()
-	);
-	return "Changing nickname...";
+	$options = array('no_history' => true);
+	if($config["muc"]["password"]) {
+		$options["password"] = $config["muc"]["password"];
+	}
+
+	Bot::reply($msg, "Changing nickname...");
+	$client->xeps['0045']->join_room($config["muc"]["room"] . '@' . $config["muc"]["server"] . '/' . implode(" ", $params), $options);
 };
