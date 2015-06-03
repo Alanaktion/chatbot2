@@ -4,7 +4,7 @@ return function(JAXL $client, XMPPStanza $msg, array $params) {
 		$param_str = implode(" ",$params);
 
 		$short_from = mb_substr($msg->from, 0, mb_strpos($msg->from, "@"));
-		if ($pl['type'] == "groupchat" && mb_strpos($msg->from,"/")) {
+		if ($msg->type == "groupchat" && mb_strpos($msg->from,"/")) {
 			$short_from = mb_substr($msg->from, mb_strpos($msg->from, "/") + 1);
 		}
 
