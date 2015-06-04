@@ -1,5 +1,5 @@
 <?php
-return function(JAXL $client, XMPPStanza $msg, array $params) use($wordlist) {
+return function(JAXL $client, XMPPStanza $msg, array $params) {
 
 	if(!empty($params[0])) {
 		$html = BotHttp::GET("http://www.php.net/manual/en/function." . str_replace("_", "-", $params[0]) . ".php");

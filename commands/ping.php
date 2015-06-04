@@ -1,5 +1,5 @@
 <?php
-return function(JAXL $client, XMPPStanza $msg, array $params) use($wordlist) {
+return function(JAXL $client, XMPPStanza $msg, array $params) {
 	if (!empty($params[0])) {
 		$response = json_decode(BotHttp::GET("http://phpizza.com/~alan/ping.php?host=" . urlencode($params[0])));
 		if($response->online) {
