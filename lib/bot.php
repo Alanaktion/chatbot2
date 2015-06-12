@@ -132,6 +132,26 @@ class Bot {
 	}
 
 	/**
+	 * Find a command's PHP file
+	 * @param  string $command_str
+	 * @return string|FALSE
+	 */
+	public static function findCommand($command) {
+		$root = dirname(__DIR__)."/commands/";
+		if(is_file($root.$command.".php")) {
+			return $root.$command.".php";
+		}
+		foreach(scandir($root) as $dir) {
+			if($dir{0} != "." && is_dir($root.$dir)) {
+				if(is_file($root.$dir."/".$command.".php")) {
+					return $root.$dir."/".$command.".php";
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Run a command
 	 * @param  string $command_str
 	 * @param  object $msg
@@ -142,13 +162,15 @@ class Bot {
 
 		$params = explode(" ", $command_str);
 		$command = array_shift($params);
-		$file = dirname(__DIR__) . "/commands/$command.php";
 
-		if(!$command) {
+		if(!$command || strpos($command, ".") !== false) {
 			return;
 		}
 
-		if(is_file($file)) {
+		_info("{$msg->from}: {$command_str}");
+
+		$file = self::findCommand($command);
+		if($file) {
 
 			// Store last command
 			$last_command = $command_str;
