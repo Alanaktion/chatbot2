@@ -7,8 +7,17 @@ return function(JAXL $client, XMPPStanza $msg, array $params) {
 		$list = scandir(__DIR__);
 		$commands = array();
 		foreach($list as $file) {
+			if($file == '.' || $file == '..') {
+				continue;
+			}
 			if(substr($file, -4) == '.php') {
 				$commands[] = substr($file, 0, strlen($file) - 4);
+			} elseif(is_dir(__DIR__ . '/' . $file)) {
+				foreach(scandir(__DIR__ . '/' . $file) as $file2) {
+					if(substr($file2, -4) == '.php') {
+						$commands[] = substr($file2, 0, strlen($file2) - 4);
+					}
+				}
 			}
 		}
 
