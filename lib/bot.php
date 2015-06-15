@@ -137,7 +137,11 @@ class Bot {
 	 * @return string|FALSE
 	 */
 	public static function findCommand($command) {
+		global $config;
 		$root = dirname(__DIR__)."/commands/";
+		if(isset($config['aliases'][$command])) {
+			$command = $config['aliases'][$command];
+		}
 		if(is_file($root.$command.".php")) {
 			return $root.$command.".php";
 		}

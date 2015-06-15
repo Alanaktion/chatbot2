@@ -25,4 +25,12 @@ $config = array(
 	"youtube_key" => "",
 	"mashape_key" => "",
 
+	// Command aliases
+	"aliases" => array(
+		"=" => "math",
+		"arand" => "array-rand",
+		"leet" => "1337",
+		"yt" => "youtube",
+	),
+
 );
