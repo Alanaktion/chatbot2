@@ -9,7 +9,7 @@ return function(JAXL $client, XMPPStanza $msg, array $params) {
 	$server = !empty($params[1]) ? $params[1] : $config["muc"]["server"];
 	$nick = !empty($params[2]) ? $params[2] : $config["muc"]["nick"];
 
-	$client->xep['0045']->join_room(
+	$client->xeps['0045']->join_room(
 		$params[0] . '@' . $server . '/' . $nick,
 		array('no_history' => true) + !empty($params[3]) ? array('password' => $params[3]) : array()
 	);
