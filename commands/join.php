@@ -8,10 +8,13 @@ return function(JAXL $client, XMPPStanza $msg, array $params) {
 
 	$server = !empty($params[1]) ? $params[1] : $config["muc"]["server"];
 	$nick = !empty($params[2]) ? $params[2] : $config["muc"]["nick"];
+	$jid = $params[0] . '@' . $server . '/' . $nick;
 
-	$client->xeps['0045']->join_room(
-		$params[0] . '@' . $server . '/' . $nick,
-		array('no_history' => true) + !empty($params[3]) ? array('password' => $params[3]) : array()
-	);
+	$options = array('no_history' => true);
+	if(!empty($params[3])) {
+		$options['password'] = $params[3];
+	}
+
+	$client->xeps['0045']->join_room($jid, $options);
 	return "Joining room {$room}@{$room_server} as {$nick}";
 };
