@@ -164,7 +164,7 @@ class Bot {
 	public static function runCommand($command_str, $msg) {
 		global $client, $last_command;
 
-		$params = explode(" ", $command_str);
+		$params = explode(" ", html_entity_decode($command_str));
 		$command = array_shift($params);
 
 		if(!$command || strpos($command, ".") !== false) {
