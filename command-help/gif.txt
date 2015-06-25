@@ -1,0 +1,2 @@
+Usage: #gif <search terms>
+Searches Giphy for a relevant GIF
