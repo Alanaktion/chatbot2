@@ -100,10 +100,11 @@ class Bot {
 		if($original_msg->type == 'groupchat') {
 			$client->xeps['0045']->send_groupchat(substr($muc_jid, 0, strpos($muc_jid, '/')), $body);
 		} else {
-			$original_msg->to = $original_msg->from;
-			$original_msg->from = $client->full_jid->to_string();
-			$original_msg->body = $body;
-			$client->send($original_msg);
+			$msg = clone $original_msg;
+			$msg->to = $original_msg->from;
+			$msg->from = $client->full_jid->to_string();
+			$msg->body = $body;
+			$client->send($msg);
 		}
 	}
 
