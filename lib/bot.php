@@ -68,6 +68,20 @@ class Bot {
 					Bot::runCommand(ltrim($msg->body, '#'), $msg);
 				}
 			});
+			$client->add_cb("on_presence_stanza", function($msg) use($client) {
+				$type = ($msg->type ?: "available");
+				$show = ($msg->show ? ' (' . $msg->show . ')' : '');
+				_info($msg->from . " is now " . $type . $show);
+
+				switch($type) {
+					case "available":
+						$client->get_vcard($msg->from);
+						break;
+					case "subscribe":
+						$client->subscribe($msg->from);
+						break;
+				}
+			});
 			$client->add_cb("on_disconnect", function() {
 				_info("Client disconnected.");
 			});
@@ -122,12 +136,14 @@ class Bot {
 			$plaintext = strip_tags($html);
 		}
 
+		// TODO: Actually send HTML
+
 		if($original_msg->type == 'groupchat') {
-			$client->xeps['0045']->send_groupchat(substr($muc_jid, 0, strpos($muc_jid, '/')), $body);
+			$client->xeps['0045']->send_groupchat(substr($muc_jid, 0, strpos($muc_jid, '/')), $plaintext);
 		} else {
 			$original_msg->to = $original_msg->from;
 			$original_msg->from = $client->full_jid->to_string();
-			$original_msg->body = $body;
+			$original_msg->body = $plaintext;
 			$client->send($original_msg);
 		}
 	}
@@ -205,7 +221,7 @@ class BotHttp {
 	/**
 	 * Perform a HTTP GET request on a URL
 	 * @param  string $url
-	 * @param  string $user_agent
+	 * @param  string|array $user_agent  User agent string or array of headers
 	 * @return string
 	 */
 	public static function GET($url, $user_agent = null) {
@@ -215,7 +231,9 @@ class BotHttp {
 			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
 			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
 			curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-			if($user_agent) {
+			if(is_array($user_agent)) {
+				curl_setopt($curl, CURLOPT_HTTPHEADER, $user_agent);
+			} elseif($user_agent) {
 				curl_setopt($curl, CURLOPT_HTTPHEADER, array('User-Agent: ' . $user_agent));
 			}
 			$data = curl_exec($curl);

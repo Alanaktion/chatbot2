@@ -7,7 +7,7 @@ return function(JAXL $client, XMPPStanza $msg, array $params) {
 		$devops_borat_feed = $twitter->get("statuses/user_timeline", array("screen_name" => "DEVOPS_BORAT", "trim_user" => true, "count" => 3000));
 	}
 
-	$tweet = $devops_borat_feed[array_rand($devops_borat_feed)];
+	$tweet = $devops_borat_feed[mt_rand(0, count($devops_borat_feed) - 1)];
 
 	if($tweet) {
 		return $tweet->text;
