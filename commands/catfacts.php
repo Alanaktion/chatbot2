@@ -1,6 +1,7 @@
 <?php
 return function(JAXL $client, XMPPStanza $msg, array $params) {
-	$response = BotHttp::GET("https://catfacts-api.appspot.com/api/facts");
+	$number = (isset($params[0]) && $params[0] > 0) ? max(100, $params[0]) : 0;
+	$response = BotHttp::GET("https://catfacts-api.appspot.com/api/facts" . ($number ? '?number=' . $number : ''));
 	$obj = json_decode($response);
-	return $obj->facts[0];
+	return implode("\n", $obj->facts);
 };
