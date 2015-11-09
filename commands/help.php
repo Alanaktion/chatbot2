@@ -29,7 +29,7 @@ return function(JAXL $client, XMPPStanza $msg, array $params) {
 		// Show single command help
 		$file = dirname(__DIR__) . "/command-help/{$params[0]}.txt";
 		if(is_file($file)) {
-			return file_get_contents($file);
+			return rtrim(file_get_contents($file));
 		} else {
 			return "Help is not available for {$params[0]}. Try running the command without any parameters.";
 		}
