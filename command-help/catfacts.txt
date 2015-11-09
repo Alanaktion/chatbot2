@@ -1,0 +1,2 @@
+Usage: #catfacts [num]
+Get a random cat fact!
