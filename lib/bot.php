@@ -225,6 +225,7 @@ class BotHttp {
 	 * @return string
 	 */
 	public static function GET($url, $user_agent = null) {
+		_info('HTTP-GET: ' . $url);
 		if (in_array('curl', get_loaded_extensions())) {
 			$curl = curl_init($url);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -252,6 +253,7 @@ class BotHttp {
 	 * @return string
 	 */
 	public static function POST($url, $post_data = array(), $content_type = "application/json") {
+		_info('HTTP-POST: ' . $url);
 		if (in_array('curl', get_loaded_extensions())) {
 			$curl = curl_init($url);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
