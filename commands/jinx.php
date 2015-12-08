@@ -2,14 +2,14 @@
 return function(JAXL $client, XMPPStanza $msg, array $params) {
 	if (!empty($params[0])) {
 		$param_str = implode(" ",$params);
-		$array_of_lots_of_stuff = array('soda','donut','quarter','punch in the face');
+		$stuff = array('soda','donut','quarter','punch in the face');
 
-		$short_from = mb_substr($pl['realfrom'], 0, mb_strpos($pl['realfrom'], "@"));
-		if ($pl['type'] == "groupchat" && mb_strpos($pl['realfrom'],"/")) {
-			$short_from = mb_substr($pl['realfrom'], mb_strpos($pl['realfrom'], "/") + 1);
+		$short_from = mb_substr($msg->from, 0, mb_strpos($msg->from, "@"));
+		if ($msg->type == "groupchat" && mb_strpos($msg->from,"/")) {
+			$short_from = mb_substr($msg->from, mb_strpos($msg->from, "/") + 1);
 		}
 
-		return $param_str . " owes " . $short_from . " a " . $array_of_lots_of_stuff[array_rand($array_of_lots_of_stuff)];
+		return $param_str . " owes " . $short_from . " a " . $stuff[array_rand($stuff)];
 	} else {
 		return "Usage: #jinx <name>";
 	}
