@@ -24,6 +24,8 @@ $config = array(
 	),
 	"youtube_key" => "",
 	"mashape_key" => "",
+	"google_key" => "",
+	"google_cse_id" => "",
 
 	// Command aliases
 	"aliases" => array(

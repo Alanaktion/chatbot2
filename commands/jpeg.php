@@ -1,21 +1,28 @@
 <?php
 // Google's a random image for the terms, then more jpegs it.
 return function(JAXL $client, XMPPStanza $msg, array $params) {
+	global $config;
 	if(!empty($params[0])) {
 		$param_str = implode(" ",$params);
-		$url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" . urlencode($param_str);
+		$httpParams = array(
+			"q" => $param_str,
+	        "searchType" => "image",
+	        "key" => $config['google_key'],
+	        "cx" => $config['google_cse_id'],
+		);
+		$url = "https://www.googleapis.com/customsearch/v1?" . http_build_query($httpParams);
 		$body = BotHttp::GET($url);
 		$response = json_decode($body);
-		if(!empty($response->responseData->results)) {
+		if(!empty($response->items)) {
 			Bot::reply($msg, "Found image, JPEGing it..");
-			$index = array_rand($response->responseData->results);
-			$src = $response->responseData->results[$index]->unescapedUrl;
-			$result = BotHttp::POST("http://needsmorejpeg.com/process", array("image" => $src), null);
+			$index = array_rand($response->items);
+			$src = $response->items[$index]->link;
+			$result = BotHttp::POST("http://needsmorejpeg.com/upload", array("image" => $src), null);
 			print_r($result);
 			if(preg_match("#/i/[0-9a-z]+\\.jpe?g#i", $result, $matches)) {
 				print_r($matches);
 				$jpeg = $matches[0];
-				return $response->responseData->results[$index]->titleNoFormatting . " - http://needsmorejpeg.com" . $jpeg;
+				return $response->items[$index]->title . " - http://needsmorejpeg.com" . $jpeg;
 			} else {
 				return "Failed to JPEG :(";
 			}
