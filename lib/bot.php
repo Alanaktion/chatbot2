@@ -71,7 +71,7 @@ class Bot {
 			$client->add_cb("on_presence_stanza", function($msg) use($client) {
 				$type = ($msg->type ?: "available");
 				$show = ($msg->show ? ' (' . $msg->show . ')' : '');
-				_info($msg->from . " is now " . $type . $show);
+				// _info($msg->from . " is now " . $type . $show);
 
 				switch($type) {
 					case "available":
