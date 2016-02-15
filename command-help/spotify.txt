@@ -1,0 +1,2 @@
+Usage: #spotify [track|artist|album:] <query>
+Search Spotify for a track, artist, or album.
