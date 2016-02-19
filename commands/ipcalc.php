@@ -3,6 +3,7 @@
 if (!function_exists("cidr2netmask")) {
 
 	function cidr2netmask($cidr) {
+		$bin = '';
 		for($i = 1; $i <= 32; $i++)
 			$bin .= $cidr >= $i ? '1' : '0';
 
@@ -38,6 +39,19 @@ if (!function_exists("cidr2netmask")) {
 }
 
 return function(JAXL $client, XMPPStanza $msg, array $params) {
+	if (is_file('/usr/bin/ipcalc')) {
+		if (!empty($params[0])) {
+			$options = preg_replace('/[^0-9a-z\/\. -]/', '', $params[0]);
+			if(strpos($options, 'b') === false) {
+				// Disable ANSI colors and binary by default
+				$options = '-nb ' . $options;
+			}
+			return "\n" . rtrim(shell_exec("/usr/bin/ipcalc $options"));
+		} else {
+			return "Usage: #ipcalc [options] <ADDRESS>[[/]<NETMASK>] [NETMASK]";
+		}
+	}
+
 	if (!empty($params[0])) {
 		if(preg_match("/([0-9]+\.){2}[0-9]+\/[0-9]{1,2}/", $params[0])) {
 			$netmask = cidr2netmask(substr($params[0], strpos($params[0], "/") + 1));
@@ -48,7 +62,7 @@ return function(JAXL $client, XMPPStanza $msg, array $params) {
 		}
 
 		$out = "\n";
-		$out .= "Address: $address";
+		$out .= "Address: $address\n";
 		$out .= "Netmask: $netmask = $cidr";
 		return $out;
 
