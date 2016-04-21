@@ -14,13 +14,10 @@ return function(JAXL $client, XMPPStanza $msg, array $params) {
 		$body = BotHttp::GET($url);
 		$response = json_decode($body);
 		if(!empty($response->items)) {
-			Bot::reply($msg, "Found image, JPEGing it..");
 			$index = array_rand($response->items);
 			$src = $response->items[$index]->link;
 			$result = BotHttp::POST("http://needsmorejpeg.com/upload", array("image" => $src), null);
-			print_r($result);
 			if(preg_match("#/i/[0-9a-z]+\\.jpe?g#i", $result, $matches)) {
-				print_r($matches);
 				$jpeg = $matches[0];
 				return $response->items[$index]->title . " - http://needsmorejpeg.com" . $jpeg;
 			} else {

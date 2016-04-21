@@ -1,5 +1,6 @@
 <?php
-return function(JAXL $client, XMPPStanza $msg, array $params) use($wordlist) {
+return function(JAXL $client, XMPPStanza $msg, array $params) {
+	global $wordlist;
 
 	if(empty($wordlist)) {
 		$wordfile = file_get_contents(dirname(__FILE__) . "/../res/wordlist.txt");
@@ -9,7 +10,6 @@ return function(JAXL $client, XMPPStanza $msg, array $params) use($wordlist) {
 	$words = $wordlist;
 
 	shuffle($words);
-	shuffle($nums);
 
 	// Start with two words
 	$pass = ucfirst($words[0]) . ucfirst($words[1]);
