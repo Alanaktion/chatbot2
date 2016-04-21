@@ -22,7 +22,7 @@ class Bot {
 
 			// Create a new client
 			$config = self::config();
-			$client = new JAXL($config);
+			$client = new SJAXL($config);
 
 			// Enable MUC support
 			$client->require_xep('0045');
@@ -104,48 +104,56 @@ class Bot {
 
 	/**
 	 * Send a reply message
-	 * @param  object $original_msg
+	 * @param  XMPPStanza $original_msg
 	 * @param  string $body
 	 * @return void
 	 */
-	public static function reply($original_msg, $body) {
+	public static function reply(XMPPStanza $original_msg, $body) {
 		global $client, $muc_jid;
 
 		if($original_msg->type == 'groupchat') {
 			$client->xeps['0045']->send_groupchat(substr($muc_jid, 0, strpos($muc_jid, '/')), $body);
 		} else {
-			$msg = clone $original_msg;
-			$msg->to = $original_msg->from;
-			$msg->from = $client->full_jid->to_string();
-			$msg->body = $body;
+			$msg = new XMPPMsg(array(
+				'type' => 'chat',
+				'to' => $original_msg->from,
+				'from' => $client->full_jid->to_string()
+			), $body);
 			$client->send($msg);
 		}
 	}
 
 	/**
 	 * Send a reply message with HTML
-	 * @param  object $original_msg
+	 * @param  XMPPStanza $original_msg
 	 * @param  string $html
 	 * @param  string $plaintext
 	 * @return void
 	 */
-	public static function replyHtml($original_msg, $html, $plaintext = null) {
+	public static function replyHtml(XMPPStanza $original_msg, $html, $plaintext = null) {
 		global $client, $muc_jid;
 
 		if($plaintext === null) {
 			$plaintext = strip_tags($html);
 		}
 
-		// TODO: Actually send HTML
-
 		if($original_msg->type == 'groupchat') {
-			$client->xeps['0045']->send_groupchat(substr($muc_jid, 0, strpos($muc_jid, '/')), $plaintext);
+			$type = 'groupchat';
+			$to = substr($muc_jid, 0, strpos($muc_jid, '/'));
 		} else {
-			$original_msg->to = $original_msg->from;
-			$original_msg->from = $client->full_jid->to_string();
-			$original_msg->body = $plaintext;
-			$client->send($original_msg);
+			$type = 'chat';
+			$to = $original_msg->from;
 		}
+
+		$msg = new XMPPMsg(array(
+			'type' => $type,
+			'to' => $to,
+			'from' => $client->full_jid->to_string()
+		), $body);
+		$msg->c('html', null, array('xmlns' => 'http://jabber.org/protocol/xhtml-im'))
+			->c('body', null, array('xmlns' => 'http://www.w3.org/1999/xhtml'))
+			->t($html);
+		$client->send($msg);
 	}
 
 	/**
@@ -208,6 +216,16 @@ class Bot {
 			_notice("Command $command does not exist.");
 		}
 
+	}
+
+	/**
+	 * Flush the stream's write buffer
+	 * @return void
+	 */
+	public static function flush() {
+		global $client;
+		$transport = $client->getTransport();
+		$transport->on_write_ready($transport->fd);
 	}
 
 }
