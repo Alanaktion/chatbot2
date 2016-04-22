@@ -149,7 +149,7 @@ class Bot {
 			'type' => $type,
 			'to' => $to,
 			'from' => $client->full_jid->to_string()
-		), $body);
+		), $plaintext);
 		$msg->c('html', null, array('xmlns' => 'http://jabber.org/protocol/xhtml-im'))
 			->c('body', null, array('xmlns' => 'http://www.w3.org/1999/xhtml'))
 			->t($html);
