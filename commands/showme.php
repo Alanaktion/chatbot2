@@ -14,7 +14,11 @@ return function(JAXL $client, XMPPStanza $msg, array $params) {
 		$response = json_decode($body);
 		if(!empty($response->items)) {
 			$index = array_rand($response->items);
-			return $response->items[$index]->title . " - " . $response->items[$index]->link;
+			if (substr($response->items[$index]->link, 0, 12) == "x-raw-image:") {
+				return $response->items[$index]->title . " - " . $response->items[$index]->image->contextLink;
+			} else {
+				return $response->items[$index]->title . " - " . $response->items[$index]->link;
+			}
 		} else {
 			return "Nada.";
 		}
