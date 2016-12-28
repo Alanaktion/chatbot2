@@ -25,7 +25,7 @@ class Bot {
 			$client = new SJAXL($config);
 
 			// Enable MUC support
-			$client->require_xep('0045');
+			$client->require_xep(array('0045'));
 
 			// Handle XMPP events
 			$client->add_cb("on_stream_start", function() {
@@ -152,7 +152,7 @@ class Bot {
 		), $plaintext);
 		$msg->c('html', null, array('xmlns' => 'http://jabber.org/protocol/xhtml-im'))
 			->c('body', null, array('xmlns' => 'http://www.w3.org/1999/xhtml'))
-			->t($html);
+			->x($html);
 		$client->send($msg);
 	}
 
@@ -206,10 +206,13 @@ class Bot {
 
 			// Run command function
 			$fn = require($file);
-			$result = $fn($client, $msg, $params);
-
-			if($result !== null) {
-				Bot::reply($msg, $result);
+			try {
+				$result = $fn($client, $msg, $params);
+				if($result !== null) {
+					Bot::reply($msg, $result);
+				}
+			} catch(Exception $e) {
+				Bot::reply($msg, "ERR: " . $e->getMessage());
 			}
 
 		} else {
